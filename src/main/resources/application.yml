@@ -1,7 +1,13 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/test-db
-    username: root
-    password: 1234
+    url: jdbc:mysql://deploy-db.czouwc6s6g8q.ap-northeast-2.rds.amazonaws.com:3306/deploy-db
+    username: admin
+    password: goormthon
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
