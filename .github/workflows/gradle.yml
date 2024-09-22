@@ -1,48 +1,76 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+name: CI/CD
 
-name: Java CI with Gradle
-
+# 워크플로우 트리거 조건 설정
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
+# 권한 설정
+permissions:
+  contents: read
+
+# Job 정의
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      #자바 버전 설정
+      # 현재 repository에서 코드를 워크플로우 환경으로 가져오기
+      - uses: actions/checkout@v3
+
+      # JDK 17 환경 설정
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-      # 브랜치 전환
-      - name: Checkout
-        uses: actions/checkout@v3
 
-      # Spring Boot 어플리케이션 Build (1)
-      - name: Spring Boot Build
-        run: ./gradlew clean build -x test --warning-mode=all --stacktrace
+      # application.yml 생성
+      - name: Create directories and application.yml
+        run: |
+          mkdir -p ./src/main/resources/
+          echo "$APPLICATION_YML" | envsubst > ./src/main/resources/application.yml
+        env:
+          APPLICATION_YML: ${{ secrets.APPLICATION_YML }}
 
-      # Docker 이미지 Build (2)
-      - name: docker image build
-        run: docker build -t juyeonlee/munggegoorm .
+      # Gradle Build를 위한 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      # DockerHub Login (3)
-      - name: docker login
-        uses: docker/login-action@v2
+      # Gradle을 통해 소스를 빌드 (테스트 제외)
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      # Docker 이미지 빌드 및 Docker Hub로 푸시
+      - name: Docker build & push to Docker Hub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/munggegoorm .
+          docker push ${{ secrets.DOCKER_USERNAME }}/munggegoorm
+
+      # 배포 작업 (SSH를 통해 EC2 인스턴스에 접속)
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # Docker Hub push (4)
-      - name: docker Hub push
-        run: docker push juyeonlee/munggegoorm
+          host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }} # PEM 키
+          port: 22
+          script: |
+            # 최신 Docker 이미지 가져오기
+            docker pull ${{ secrets.DOCKER_USERNAME }}/munggegoorm
+            
+            # 기존 컨테이너 중지 및 제거
+            docker stop munggegoorm || true
+            docker rm munggegoorm || true
+            
+            # 새 컨테이너 실행 (로그는 syslog로, 포트 8080 매핑)
+            docker run -d --log-driver=syslog --name munggegoorm -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/munggegoorm
+            
+            # 사용되지 않는 종료된 컨테이너 정리
+            docker rm $(docker ps --filter 'status=exited' -a -q)
+            
+            # 사용되지 않는 Docker 이미지 정리
+            docker image prune -f
