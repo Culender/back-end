@@ -15,6 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @GetMapping
     public ResponseEntity<String> getTest() {
-        return ResponseEntity.ok("CI/CD TEST SUCCESS");
+        return ResponseEntity.ok("TEST SUCCESS");
     }
 }
