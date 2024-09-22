@@ -60,17 +60,17 @@ jobs:
           port: 22
           script: |
             # 최신 Docker 이미지 가져오기
-            docker pull ${{ secrets.DOCKER_USERNAME }}/munggegoorm
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/munggegoorm
             
             # 기존 컨테이너 중지 및 제거
-            docker stop munggegoorm || true
-            docker rm munggegoorm || true
+            sudo docker stop munggegoorm || true
+            sudo docker rm munggegoorm || true
             
             # 새 컨테이너 실행 (로그는 syslog로, 포트 8080 매핑)
-            docker run -d --log-driver=syslog --name munggegoorm -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/munggegoorm
+            sudo docker run -d --log-driver=syslog --name munggegoorm -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/munggegoorm
             
             # 사용되지 않는 종료된 컨테이너 정리
-            docker rm $(docker ps --filter 'status=exited' -a -q)
+            sudo docker rm $(docker ps --filter 'status=exited' -a -q)
             
             # 사용되지 않는 Docker 이미지 정리
-            docker image prune -f
+            sudo docker image prune -f
