@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://deploy-db.czouwc6s6g8q.ap-northeast-2.rds.amazonaws.com:3306/deploy-db
+    url: jdbc:mysql://deploy-db.czouwc6s6g8q.ap-northeast-2.rds.amazonaws.com:3306/db
     username: admin
     password: goormthon
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -11,3 +11,9 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+
+application:
+  security:
+    jwt:
+      secret-key: pEa06tMzEH3hwgylMSIs1myt2uF5naFEmOaesRwuQO34svONnmD3O9y6Ei5+dsp1dCsS4mSZsX4wNNk9GcFR1w==
+      expiration: 86400000 #토큰 지속 시간 : 1일
