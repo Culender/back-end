@@ -1,5 +1,6 @@
 package com.example.back_end.user.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class SignUpDto {
-    @NotNull
+    @NotBlank(message = "아이디는 필수입니다.")
     private String loginId;
-    @NotNull
+    @NotBlank(message = "비밀번호는 필수입니다.")
     private String password;
-    @NotNull
+    @NotBlank(message = "이름은 필수입니다.")
     private String name;
-    @NotNull
+    @NotBlank(message = "닉네임은 필수입니다.")
     private String nickname;
-    @NotNull
+    @NotBlank(message = "연락처는 필수입니다.")
     private String phone;
 
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
     private Long userId; //유저 기본키
 
@@ -33,10 +33,10 @@ public class User {
     private String phone; //연락처
 
     //유저 엔티티 생성 메소드
-    public static User toEntity(SignUpDto dto) {
+    public static User toEntity(SignUpDto dto, String encodePassword) {
         User user = User.builder()
                 .loginId(dto.getLoginId())
-                .password(dto.getPassword())
+                .password(encodePassword)
                 .name(dto.getName())
                 .nickname(dto.getNickname())
                 .phone(dto.getPhone())

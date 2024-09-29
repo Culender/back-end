@@ -23,7 +23,7 @@ public class UserController {
     //회원가입
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpDto dto) {
-        String result = userService.signUp(dto);
+        CustomApiResponse<?> result = userService.signUp(dto);
         return ResponseEntity.ok(result);
     }
 
