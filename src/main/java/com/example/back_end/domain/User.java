@@ -1,6 +1,7 @@
 package com.example.back_end.domain;
 
 import com.example.back_end.user.dto.SignUpDto;
+import com.example.back_end.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")

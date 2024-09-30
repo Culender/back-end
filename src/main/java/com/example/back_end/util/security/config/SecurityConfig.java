@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/signUp", "/api/signIn").permitAll() // 로그인 및 회원가입 요청 제외
+                        .requestMatchers("/api/user/signUp", "/api/user/signIn").permitAll() // 로그인 및 회원가입 요청 제외
                         .anyRequest().authenticated()) // 그 외 요청은 인증 필요
                 .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
