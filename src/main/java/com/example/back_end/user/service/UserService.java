@@ -1,6 +1,7 @@
 package com.example.back_end.user.service;
 
 import com.example.back_end.domain.User;
+import com.example.back_end.s3.S3UploadService;
 import com.example.back_end.user.dto.SignInReqDto;
 import com.example.back_end.user.dto.SignInResDto;
 import com.example.back_end.user.dto.SignUpDto;
@@ -8,11 +9,13 @@ import com.example.back_end.user.repository.UserRepository;
 import com.example.back_end.util.response.CustomApiResponse;
 import com.example.back_end.util.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -23,25 +26,36 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final S3UploadService s3UploadService;
 
     //회원가입
     @Transactional
     public CustomApiResponse<?> signUp(SignUpDto dto) {
-        //이미 존재하는 아이디인지 확인
-        Optional<User> findUser = userRepository.findByLoginId(dto.getLoginId());
-        if(findUser.isPresent()){ //존재하는 아이디인 경우
-            CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.CONFLICT.value(), "이미 존재하는 아이디입니다.");
+        try{
+            //이미 존재하는 아이디인지 확인
+            Optional<User> findUser = userRepository.findByLoginId(dto.getLoginId());
+            if(findUser.isPresent()){ //존재하는 아이디인 경우
+                CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.CONFLICT.value(), "이미 존재하는 아이디입니다.");
+                return response;
+            }
+
+            String encodePassword = passwordEncoder.encode(dto.getPassword()); //비밀번호 암호화
+
+            MultipartFile profileImg = dto.getProfileImg();
+            String imgPath = s3UploadService.upload(profileImg,"profileImage");
+
+            //유저 엔티티 생성
+            User user = User.toEntity(dto,encodePassword,imgPath);
+            userRepository.save(user); //DB에 저장
+            CustomApiResponse<?> response = CustomApiResponse.createSuccess(HttpStatus.OK.value(), null,"회원가입에 성공하였습니다.");
+
             return response;
         }
-
-        String encodePassword = passwordEncoder.encode(dto.getPassword()); //비밀번호 암호화
-
-        //유저 엔티티 생성
-        User user = User.toEntity(dto,encodePassword);
-        userRepository.save(user); //DB에 저장
-        CustomApiResponse<?> response = CustomApiResponse.createSuccess(HttpStatus.OK.value(), null,"회원가입에 성공하였습니다.");
-
-        return response;
+        catch(DataAccessException dae) {
+            return CustomApiResponse.createFailWithout(HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 오류가 발생했습니다.");
+        } catch (Exception e) {
+            return CustomApiResponse.createFailWithout(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생했습니다.");
+        }
     }
 
     //로그인

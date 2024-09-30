@@ -17,3 +17,16 @@ application:
     jwt:
       secret-key: pEa06tMzEH3hwgylMSIs1myt2uF5naFEmOaesRwuQO34svONnmD3O9y6Ei5+dsp1dCsS4mSZsX4wNNk9GcFR1w==
       expiration: 86400000 #토큰 지속 시간 : 1일
+
+cloud:
+  aws:
+    s3:
+      bucket: goormthon-bucket
+    credentials:
+      access-key: AKIA4AQ3UJZ73USBKFOS
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false

@@ -32,14 +32,18 @@ public class User {
     @Column(name="phone")
     private String phone; //연락처
 
+    @Column(name="profile_img")
+    private String profileImg;
+
     //유저 엔티티 생성 메소드
-    public static User toEntity(SignUpDto dto, String encodePassword) {
+    public static User toEntity(SignUpDto dto, String encodePassword, String imgPath) {
         User user = User.builder()
                 .loginId(dto.getLoginId())
                 .password(encodePassword)
                 .name(dto.getName())
                 .nickname(dto.getNickname())
                 .phone(dto.getPhone())
+                .profileImg(imgPath)
                 .build();
         return user;
     }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -20,5 +21,6 @@ public class SignUpDto {
     private String nickname;
     @NotBlank(message = "연락처는 필수입니다.")
     private String phone;
+    private MultipartFile profileImg;
 
 }
