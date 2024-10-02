@@ -14,8 +14,8 @@ import lombok.*;
 public class Record extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="post_id")
-    private Long post_id;
+    @Column(name="record_id")
+    private Long record_id;
 
     @Column(name="date")
     private String date;
