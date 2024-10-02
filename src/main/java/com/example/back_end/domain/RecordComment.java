@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class RecordComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="conmment_id")
+    @Column(name="comment_id")
     private Long commentId;
 
     @Column(name="content")

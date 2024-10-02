@@ -2,6 +2,8 @@ package com.example.back_end.recordComment.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +15,9 @@ import org.springframework.stereotype.Service;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateRecordCommentDto {
-    @NotBlank(message = "관람기록의 기본키는 필수입니다.")
+    @NotNull(message = "관람기록의 기본키는 필수입니다.")
     private Long recordId;
 
-    @NotBlank(message = "댓글 내용은 필수입니다.")
+    @NotEmpty(message = "댓글 내용은 필수입니다.")
     private String comment;
 }
