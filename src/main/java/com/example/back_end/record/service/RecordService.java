@@ -1,9 +1,9 @@
-package com.example.back_end.post.service;
+package com.example.back_end.record.service;
 
-import com.example.back_end.domain.Post;
+import com.example.back_end.domain.Record;
 import com.example.back_end.domain.User;
-import com.example.back_end.post.dto.CreatePostDto;
-import com.example.back_end.post.repository.PostRepository;
+import com.example.back_end.record.dto.CreateRecordDto;
+import com.example.back_end.record.repository.RecordRepository;
 import com.example.back_end.s3.S3UploadService;
 import com.example.back_end.user.repository.UserRepository;
 import com.example.back_end.util.response.CustomApiResponse;
@@ -17,12 +17,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PostService {
+public class RecordService {
     private final UserRepository userRepository;
     private final S3UploadService s3UploadService;
-    private final PostRepository postRepository;
+    private final RecordRepository recordRepository;
 
-    public CustomApiResponse<?> createPost(CreatePostDto createPostDto, String currentUserId) {
+    public CustomApiResponse<?> createRecord(CreateRecordDto createRecordDto, String currentUserId) {
         try{
             Optional<User> user = userRepository.findByLoginId(currentUserId);
 
@@ -31,12 +31,12 @@ public class PostService {
                 return response;
             }
 
-            MultipartFile imageUrl = createPostDto.getImage();
+            MultipartFile imageUrl = createRecordDto.getImage();
             String imgPath = s3UploadService.upload(imageUrl,"postImage");
 
             //엔티티 생성
-            Post post = Post.toEntity(createPostDto,user.get(),imgPath);
-            postRepository.save(post); //DB에 저장
+            Record record = Record.toEntity(createRecordDto,user.get(),imgPath);
+            recordRepository.save(record); //DB에 저장
 
             CustomApiResponse<?> response = CustomApiResponse.createSuccess(HttpStatus.OK.value(), null,"관람 기록이 작성되었습니다.");
             return response;

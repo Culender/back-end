@@ -1,4 +1,4 @@
-package com.example.back_end.post.dto;
+package com.example.back_end.record.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreatePostDto {
+public class CreateRecordDto {
     @NotBlank(message = "날짜는 필수 입력값입니다.")
     private String date;
     @NotBlank(message = "장소는 필수 입력값입니다.")

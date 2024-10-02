@@ -1,18 +1,17 @@
 package com.example.back_end.domain;
 
-import com.example.back_end.BackEndApplication;
-import com.example.back_end.post.dto.CreatePostDto;
+import com.example.back_end.record.dto.CreateRecordDto;
 import com.example.back_end.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "POSTS")
+@Table(name = "RECORD")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class Post extends BaseEntity {
+public class Record extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="post_id")
@@ -34,8 +33,8 @@ public class Post extends BaseEntity {
     @JoinColumn(name="user_id")
     private User user;
 
-    public static Post toEntity(CreatePostDto createPostDto, User user, String imgPath) {
-        return Post.builder()
+    public static Record toEntity(CreateRecordDto createPostDto, User user, String imgPath) {
+        return Record.builder()
                 .user(user)
                 .date(createPostDto.getDate())
                 .place(createPostDto.getPlace())
