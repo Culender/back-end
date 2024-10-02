@@ -15,7 +15,7 @@ public class Record extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="record_id")
-    private Long record_id;
+    private Long recordId;
 
     @Column(name="date")
     private String date;

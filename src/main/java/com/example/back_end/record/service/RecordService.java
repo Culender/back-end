@@ -70,7 +70,7 @@ public class RecordService {
         Record record = findRecord.get();
 
         RecordListDto recordList = new RecordListDto(
-                record.getRecord_id(),
+                record.getRecordId(),
                 user.getNickname(),
                 record.getDate(),
                 record.getContent(),
