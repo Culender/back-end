@@ -23,4 +23,11 @@ public class RecordController {
         CustomApiResponse<?> result = recordService.createRecord(createRecordDto,currentUserId);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/getRecord")
+    public ResponseEntity<?> getRecord(@RequestParam Long recordId){
+        String currentUserId =userUtils.getCurrentUserId();
+        CustomApiResponse<?> result = recordService.getRecord(recordId,currentUserId);
+        return ResponseEntity.ok(result);
+    }
 }
