@@ -25,4 +25,10 @@ public class RecordLikeController {
     }
 
     //좋아요 취소
+    @PostMapping("/unlike")
+    public ResponseEntity<?> unlike (@RequestParam Long recordId){
+        String currentUserId = userUtils.getCurrentUserId();
+        CustomApiResponse<?> response =recordLikeService.unlike(recordId,currentUserId);
+        return ResponseEntity.ok(response);
+    }
 }

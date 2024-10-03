@@ -51,4 +51,25 @@ public class RecordLikeService {
 
         return CustomApiResponse.createSuccess(HttpStatus.OK.value(),null,"좋아요");
     }
+
+    public CustomApiResponse<?> unlike(Long recordId, String currentUserId) {
+        Optional<User> user = userRepository.findByLoginId(currentUserId);
+        Optional<Record> record = recordRepository.findById(recordId);
+        if(user.isEmpty()){
+            return CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다.");
+        }
+        if(record.isEmpty()){
+            return CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "존재하지 않는 관람기록입니다.");
+        }
+
+        // 중복 좋아요 취소 여부 확인
+        Optional<RecordLike> findRecordLike = recordLikeRepository.findByRecord_RecordIdAndUser_UserId(record.get().getRecordId(), user.get().getUserId());
+        if(findRecordLike.isEmpty()){
+            return CustomApiResponse.createFailWithout(HttpStatus.CONFLICT.value(), "이미 좋아요를 취소하였습니다.");
+        }
+
+        //좋아요 삭제
+        recordLikeRepository.delete(findRecordLike.get());
+        return CustomApiResponse.createSuccess(HttpStatus.OK.value(),null,"좋아요 취소");
+    }
 }
