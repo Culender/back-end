@@ -1,43 +1,35 @@
 package com.example.back_end.util.exception;
 
+import com.amazonaws.services.kms.model.AlreadyExistsException;
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.example.back_end.util.response.CustomApiResponse;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.stream.Collectors;
-
-//GlobalExceptionHandler클래스가 전역적으로 예외처리를 담당할 것임.
+// 전역 예외 처리를 위한 클래스
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<CustomApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        String errorMessage =  e.getBindingResult().getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining("; "));
-
-        System.out.println(errorMessage);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(CustomApiResponse.createFailWithout(HttpStatus.BAD_REQUEST.value(), errorMessage));
+    // NotFoundException 처리
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<CustomApiResponse<?>> handleNotFoundException(NotFoundException ex) {
+        CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<CustomApiResponse<?>>handleConstraintViolationException(ConstraintViolationException e) {
-        String errorMessage = e.getConstraintViolations().stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining("; "));
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(CustomApiResponse.createFailWithout(HttpStatus.BAD_REQUEST.value(),errorMessage));
+    // AlreadyExistsException 처리
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<CustomApiResponse<?>> handleAlreadyExistsException(AlreadyExistsException ex) {
+        CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.CONFLICT.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
+    // 모든 기타 예외 처리
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<CustomApiResponse<?>> handleException(Exception ex) {
+        CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생했습니다.");
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
-
