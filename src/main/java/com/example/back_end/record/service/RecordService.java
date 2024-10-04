@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -89,6 +91,7 @@ public class RecordService {
 
         RecordListDto recordList = new RecordListDto(
                 record.getRecordId(),
+                user.getProfileImg(),
                 user.getNickname(),
                 record.getTitle(),
                 record.getDate(),
@@ -103,5 +106,46 @@ public class RecordService {
 
         CustomApiResponse<?> response = CustomApiResponse.createSuccess(HttpStatus.OK.value(),recordList,"기본키가"+recordId+"인 게시물이 조회되었습니다.");
         return response;
+    }
+
+    public CustomApiResponse<?> getRecentRecord(String currentUserId) {
+        Optional<User> findUser = userRepository.findByLoginId(currentUserId);
+        if(findUser.isEmpty()){
+            CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다.");
+            return response;
+        }
+
+        List<Record> findRecords = recordRepository.findAllByOrderByCreateAtDesc();
+        List<RecordListDto> recordResponse = new ArrayList<>();
+
+        User user = findUser.get();
+
+        for(Record record : findRecords){
+            //댓글수 찾기
+            Long commentCount = recordCommentRepository.countByRecord_RecordId(record.getRecordId());
+
+            //좋아요수 찾기
+            Long likeCount = recordLikeRepository.countByRecord_RecordId(record.getRecordId());
+
+            //좋아요 여부
+            Optional<RecordComment> recordLike = recordCommentRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
+            Boolean isLiked = recordLike.isPresent();
+
+            recordResponse.add(RecordListDto.builder()
+                            .recordId(record.getRecordId())
+                            .profileImg(user.getProfileImg())
+                            .nickname(user.getNickname())
+                            .date(record.getDate())
+                            .title(record.getTitle())
+                            .content(record.getContent())
+                            .image(record.getImage())
+                            .commentCount(commentCount)
+                            .likeCount(likeCount)
+                            .isLiked(isLiked)
+                            .build());
+
+        }
+
+        return CustomApiResponse.createSuccess(HttpStatus.OK.value(), recordResponse,"최신순 관람기록이 조회되었습니다.");
     }
 }
