@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @NoArgsConstructor
 public class CreateRecordDto {
+    @NotBlank(message = "제목은 필수 입력값입니다.")
+    private String title;
     @NotBlank(message = "날짜는 필수 입력값입니다.")
     private String date;
     @NotBlank(message = "장소는 필수 입력값입니다.")

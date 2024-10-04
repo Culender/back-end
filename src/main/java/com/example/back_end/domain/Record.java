@@ -20,6 +20,9 @@ public class Record extends BaseEntity {
     @Column(name="date")
     private String date;
 
+    @Column(name="title")
+    private String title;
+
     @Column(name="place")
     private String place;
 
@@ -37,6 +40,7 @@ public class Record extends BaseEntity {
         return Record.builder()
                 .user(user)
                 .date(createPostDto.getDate())
+                .title(createPostDto.getTitle())
                 .place(createPostDto.getPlace())
                 .content(createPostDto.getContent())
                 .image(imgPath)
