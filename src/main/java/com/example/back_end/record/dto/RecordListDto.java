@@ -10,10 +10,11 @@ import lombok.*;
 public class RecordListDto {
     private Long recordId;
     private String nickname;
-    //private String title;
+    private String title;
     private String date;
     private String content;
     private String image;
-    //private Long likeCount;
-    //private Long commentCount;
+    private Boolean isLiked;
+    private Long likeCount;
+    private Long commentCount;
 }
