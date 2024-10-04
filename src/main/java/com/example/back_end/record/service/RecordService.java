@@ -4,6 +4,7 @@ import com.example.back_end.domain.Record;
 import com.example.back_end.domain.RecordComment;
 import com.example.back_end.domain.User;
 import com.example.back_end.record.dto.CreateRecordDto;
+import com.example.back_end.record.dto.MyRecordListDto;
 import com.example.back_end.record.dto.RecordListDto;
 import com.example.back_end.record.repository.RecordRepository;
 import com.example.back_end.recordComment.repository.RecordCommentRepository;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +61,6 @@ public class RecordService {
         }
     }
 
-    //TODO : 댓글수, 좋아요수 추가 필요
     public CustomApiResponse<?> getRecord(Long recordId, String currentUserId) {
 
         //존재하는 유저인지
@@ -118,6 +120,9 @@ public class RecordService {
 
         List<Record> findRecords = recordRepository.findAllByOrderByCreateAtDesc();
         List<RecordListDto> recordResponse = new ArrayList<>();
+        if(findRecords.isEmpty()){
+            return CustomApiResponse.createSuccess(HttpStatus.OK.value(), recordResponse,"기록한 관람기록이 존재하지 않습니다.");
+        }
 
         User user = findUser.get();
 
@@ -159,6 +164,9 @@ public class RecordService {
         }
         List<Record> findRecords = recordRepository.findAllByOrderByLikeCountDesc();
         List<RecordListDto> recordResponse = new ArrayList<>();
+        if(findRecords.isEmpty()){
+            return CustomApiResponse.createSuccess(HttpStatus.OK.value(), recordResponse,"기록한 관람기록이 존재하지 않습니다.");
+        }
 
         User user = findUser.get();
 
@@ -189,5 +197,36 @@ public class RecordService {
 
         return CustomApiResponse.createSuccess(HttpStatus.OK.value(), recordResponse,"인기순 관람기록이 조회되었습니다.");
 
+    }
+
+    public CustomApiResponse<?> getMyRecord(String currentUserId) {
+        Optional<User> findUser = userRepository.findByLoginId(currentUserId);
+        if(findUser.isEmpty()){
+            CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다.");
+            return response;
+        }
+        User user = findUser.get();
+        List<Record> findRecords = recordRepository.findAllByUser_UserId(user.getUserId());
+        List<MyRecordListDto> recordResponse = new ArrayList<>();
+
+        if(findRecords.isEmpty()){
+            return CustomApiResponse.createSuccess(HttpStatus.OK.value(), recordResponse,"기록한 관람기록이 존재하지 않습니다.");
+        }
+        for(Record record : findRecords){
+            //날짜 가공
+            LocalDateTime date = record.getCreateAt();
+            Long year = Long.parseLong(date.format(DateTimeFormatter.ofPattern("yyyy")));
+            Long month = Long.parseLong(date.format(DateTimeFormatter.ofPattern("M")));
+            Long day = Long.parseLong(date.format(DateTimeFormatter.ofPattern("dd")));
+
+            recordResponse.add(MyRecordListDto.builder()
+                            .recordId(record.getRecordId())
+                            .year(year)
+                            .month(month)
+                            .day(day)
+                            .build());
+        }
+
+        return CustomApiResponse.createSuccess(HttpStatus.OK.value(), recordResponse,"나의 관람기록이 조회되었습니다.");
     }
 }

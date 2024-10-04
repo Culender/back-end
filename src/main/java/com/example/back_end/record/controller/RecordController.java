@@ -46,4 +46,11 @@ public class RecordController {
         CustomApiResponse<?> result = recordService.getPopularRecord(currentUserId);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/getMyRecord")
+    public ResponseEntity<?> getMyRecord(){
+        String currentUserId =userUtils.getCurrentUserId();
+        CustomApiResponse<?> result = recordService.getMyRecord(currentUserId);
+        return ResponseEntity.ok(result);
+    }
 }
