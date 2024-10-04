@@ -40,4 +40,10 @@ public class RecordController {
     }
 
     //인기순 (좋아요순) 관람기록 전체 조회
+    @GetMapping("/getPopularRecord")
+    public ResponseEntity<?> getPopularRecord(){
+        String currentUserId =userUtils.getCurrentUserId();
+        CustomApiResponse<?> result = recordService.getPopularRecord(currentUserId);
+        return ResponseEntity.ok(result);
+    }
 }
