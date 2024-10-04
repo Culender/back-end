@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class RecordListDto {
     private Long recordId;
+    private String profileImg;
     private String nickname;
     private String title;
     private String date;

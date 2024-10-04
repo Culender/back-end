@@ -30,4 +30,27 @@ public class RecordController {
         CustomApiResponse<?> result = recordService.getRecord(recordId,currentUserId);
         return ResponseEntity.ok(result);
     }
+
+    //최신순 관람기록 전체 조회
+    @GetMapping("/getRecentRecord")
+    public ResponseEntity<?> getRecentRecord(){
+        String currentUserId =userUtils.getCurrentUserId();
+        CustomApiResponse<?> result = recordService.getRecentRecord(currentUserId);
+        return ResponseEntity.ok(result);
+    }
+
+    //인기순 (좋아요순) 관람기록 전체 조회
+    @GetMapping("/getPopularRecord")
+    public ResponseEntity<?> getPopularRecord(){
+        String currentUserId =userUtils.getCurrentUserId();
+        CustomApiResponse<?> result = recordService.getPopularRecord(currentUserId);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getMyRecord")
+    public ResponseEntity<?> getMyRecord(){
+        String currentUserId =userUtils.getCurrentUserId();
+        CustomApiResponse<?> result = recordService.getMyRecord(currentUserId);
+        return ResponseEntity.ok(result);
+    }
 }
