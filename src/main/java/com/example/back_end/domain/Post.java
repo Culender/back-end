@@ -1,7 +1,6 @@
 package com.example.back_end.domain;
 
 import com.example.back_end.post.dto.CreatePostDto;
-import com.example.back_end.record.dto.CreateRecordDto;
 import com.example.back_end.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,11 +37,11 @@ public class Post extends BaseEntity {
     private User user; //작성자
 
     // 댓글 기능 (1:N 관계)
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post")
     private List<PostComment> comments;
 
     // 좋아요 기능  (1:N 관계)
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post")
     private List<PostLike> likes;
 
     public static Post toEntity(CreatePostDto createPostDto, User user, String imgPath) {

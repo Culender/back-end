@@ -5,7 +5,6 @@ import com.example.back_end.domain.PostComment;
 import com.example.back_end.domain.User;
 import com.example.back_end.post.dto.CreateCommentDto;
 import com.example.back_end.post.dto.GetCommentDto;
-import com.example.back_end.post.dto.GetPostDto;
 import com.example.back_end.post.dto.UpdateCommentDto;
 import com.example.back_end.post.repository.PostCommentRepository;
 import com.example.back_end.post.repository.PostRepository;
@@ -44,11 +43,7 @@ public class PostCommentService {
         }
 
         // 댓글 엔티티 생성
-        PostComment comment = PostComment.builder()
-                .post(post.get())
-                .user(user.get())
-                .content(createCommentDto.getContent())
-                .build();
+        PostComment comment = PostComment.toEntity(createCommentDto.getContent(),user.get(), post.get());
 
         postCommentRepository.save(comment); // 댓글 저장
 
@@ -78,7 +73,7 @@ public class PostCommentService {
             }
 
             // 해당 게시글에 달린 댓글 리스트를 조회
-            List<GetCommentDto> commentDtos = postCommentRepository.findByPostId(postId).stream()
+            List<GetCommentDto> commentDtos = postCommentRepository.findByPost_PostId(postId).stream()
                     .map(comment -> new GetCommentDto(
                             comment.getCommentId(),
                             comment.getUser().getNickname(),

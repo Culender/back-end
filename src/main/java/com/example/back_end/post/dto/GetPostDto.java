@@ -19,6 +19,7 @@ public class GetPostDto {
     private String image; //첨부 이미지
     private LocalDateTime createdAt; // 작성일자
     private LocalDateTime modifiedAt; // 수정일자
-    //private Long likeCount; //좋아요 수
-    //private Long commentCount; //댓글 수
+    private Long likeCount; //좋아요 수
+    private Long commentCount; //댓글 수
+    private Boolean isLiked; //좋아요 여부
 }

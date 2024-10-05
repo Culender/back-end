@@ -34,7 +34,7 @@ public class PostComment extends BaseEntity {
     }
 
 
-    public PostComment toEntity() {//생성자를 사용해 객체 생성
+    public static PostComment toEntity(String content, User user, Post post) {
         return PostComment.builder()
                 .content(content)
                 .user(user)

@@ -7,6 +7,7 @@ import com.example.back_end.util.response.CustomApiResponse;
 import com.example.back_end.util.security.jwt.util.AuthenticationUserUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,13 @@ public class PostController {
         String currentUserId = userUtils.getCurrentUserId();
         CustomApiResponse<?> result = postService.createPost(createPostDto, currentUserId);
         return ResponseEntity.ok(result);
+    }
+
+    // 게시글 전체 조회
+    @GetMapping("/posts")
+    public ResponseEntity<?> getAllPosts() {
+        String currentUserId = userUtils.getCurrentUserId();
+        return ResponseEntity.ok(postService.getAllPosts(currentUserId));
     }
 
     // 게시글 조회
@@ -48,5 +56,13 @@ public class PostController {
         String currentUserId = userUtils.getCurrentUserId();
         CustomApiResponse<?> result = postService.deletePost(postId, currentUserId);
         return ResponseEntity.ok(result);
+    }
+
+    // 주제별 게시글 조회
+    @GetMapping("/category/{category}")
+    public ResponseEntity<?> getPostsByCategory(@PathVariable String category) {
+        String currentUserId = userUtils.getCurrentUserId();
+        CustomApiResponse<?> response = postService.getPostsByCategory(category, currentUserId);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 }
