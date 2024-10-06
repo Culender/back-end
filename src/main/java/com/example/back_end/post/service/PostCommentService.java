@@ -74,13 +74,13 @@ public class PostCommentService {
 
             // 해당 게시글에 달린 댓글 리스트를 조회
             List<GetCommentDto> commentDtos = postCommentRepository.findByPost_PostId(postId).stream()
-                    .map(comment -> new GetCommentDto(
-                            comment.getCommentId(),
-                            comment.getUser().getNickname(),
-                            comment.getContent(),
-                            comment.getCreateAt(),
-                            comment.getUpdateAt()
-                    ))
+                    .map(comment -> GetCommentDto.builder()
+                            .commentId(comment.getCommentId())
+                            .nickname(comment.getUser().getNickname())
+                            .content(comment.getContent())
+                            .createdAt(comment.getCreateAt())
+                            .updatedAt(comment.getUpdateAt())
+                            .build())
                     .collect(Collectors.toList()); // 리스트로 수집
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), commentDtos, "댓글 목록을 불러왔습니다.");

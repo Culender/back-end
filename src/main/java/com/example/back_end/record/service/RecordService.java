@@ -2,8 +2,10 @@ package com.example.back_end.record.service;
 
 import com.example.back_end.domain.Record;
 import com.example.back_end.domain.RecordComment;
+import com.example.back_end.domain.RecordLike;
 import com.example.back_end.domain.User;
 import com.example.back_end.record.dto.CreateRecordDto;
+import com.example.back_end.record.dto.LikedRecordDto;
 import com.example.back_end.record.dto.MyRecordListDto;
 import com.example.back_end.record.dto.RecordListDto;
 import com.example.back_end.record.repository.RecordRepository;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -24,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -228,5 +232,34 @@ public class RecordService {
         }
 
         return CustomApiResponse.createSuccess(HttpStatus.OK.value(), recordResponse,"나의 관람기록이 조회되었습니다.");
+    }
+
+    // 관심기록들 조회
+    @Transactional(readOnly = true)
+    public CustomApiResponse<?> getUserLikedRecords(String currentUserId) {
+
+        Optional<User> findUser = userRepository.findByLoginId(currentUserId);
+        if (findUser.isEmpty()) {
+            return CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다.");
+        }
+
+        User user = findUser.get();
+
+        // 사용자가 좋아요한 RecordLike 엔티티 목록을 조회
+        List<RecordLike> likedRecords = recordLikeRepository.findByUser_UserId(user.getUserId());
+
+        // 조회된 목록을 DTO로 변환하여 반환
+        List<LikedRecordDto> likedRecordDtos = likedRecords.stream()
+                .map(like -> new LikedRecordDto(
+                        like.getRecord().getRecordId(),
+                        like.getRecord().getTitle(),
+                        like.getRecord().getContent(),
+                        like.getRecord().getPlace(),
+                        like.getRecord().getDate(),
+                        like.getRecord().getImage()
+                ))
+                .collect(Collectors.toList());
+
+        return CustomApiResponse.createSuccess(HttpStatus.OK.value(), likedRecordDtos,"관심 관람기록이 조회되었습니다.");
     }
 }

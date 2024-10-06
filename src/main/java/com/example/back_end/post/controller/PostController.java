@@ -1,6 +1,7 @@
 package com.example.back_end.post.controller;
 
 import com.example.back_end.post.dto.CreatePostDto;
+import com.example.back_end.post.dto.LikedPostDto;
 import com.example.back_end.post.dto.UpdatePostDto;
 import com.example.back_end.post.service.PostService;
 import com.example.back_end.util.response.CustomApiResponse;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/post")
@@ -28,7 +31,7 @@ public class PostController {
     }
 
     // 게시글 전체 조회
-    @GetMapping("/posts")
+    @GetMapping("/getAllPosts")
     public ResponseEntity<?> getAllPosts() {
         String currentUserId = userUtils.getCurrentUserId();
         return ResponseEntity.ok(postService.getAllPosts(currentUserId));
@@ -64,5 +67,11 @@ public class PostController {
         String currentUserId = userUtils.getCurrentUserId();
         CustomApiResponse<?> response = postService.getPostsByCategory(category, currentUserId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @GetMapping("/getLikedPosts")
+    public ResponseEntity<?> getLikedPosts() {
+        String currentUserId = userUtils.getCurrentUserId();
+        return ResponseEntity.ok(postService.getLikedPosts(currentUserId));
     }
 }

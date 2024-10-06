@@ -5,6 +5,7 @@ import com.example.back_end.domain.PostLike;
 import com.example.back_end.domain.User;
 import com.example.back_end.post.dto.CreatePostDto;
 import com.example.back_end.post.dto.GetPostDto;
+import com.example.back_end.post.dto.LikedPostDto;
 import com.example.back_end.post.dto.UpdatePostDto;
 import com.example.back_end.post.repository.PostCommentRepository;
 import com.example.back_end.post.repository.PostLikeRepository;
@@ -37,9 +38,9 @@ public class PostService {
     // 게시글 작성
     public CustomApiResponse<?> createPost(CreatePostDto createPostDto, String currentUserId) {
         try {
-            Optional<User> user = userRepository.findByLoginId(currentUserId);
+            Optional<User> findUser = userRepository.findByLoginId(currentUserId);
 
-            if (user.isEmpty()) {
+            if (findUser.isEmpty()) {
                 CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "아이디가 " + currentUserId + "인 회원은 존재하지 않습니다.");
                 return response;
             }
@@ -48,7 +49,7 @@ public class PostService {
             String imgPath = s3UploadService.upload(imageUrl, "postImage");
 
             //게시글 엔티티 생성
-            Post post = Post.toEntity(createPostDto,user.get(), imgPath);
+            Post post = Post.toEntity(createPostDto, findUser.get(), imgPath);
             postRepository.save(post); // 게시글 엔티티 DB에 저장
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), null,"게시글 작성이 완료되었습니다.");
@@ -83,19 +84,19 @@ public class PostService {
                 Optional<PostLike> postLike = postLikeRepository.findByPost_PostIdAndUser_UserId(post.getPostId(), findUser.get().getUserId());
                 Boolean isLiked = postLike.isPresent();
 
-                return new GetPostDto(
-                        post.getPostId(),
-                        post.getTitle(),
-                        post.getUser().getNickname(),
-                        post.getCategory(),
-                        post.getContent(),
-                        post.getImage(),
-                        post.getCreateAt(),
-                        post.getUpdateAt(),
-                        commentCount,
-                        likeCount,
-                        isLiked
-                );
+                return GetPostDto.builder()  // 빌더 패턴 사용
+                        .postId(post.getPostId())
+                        .title(post.getTitle())
+                        .nickname(post.getUser().getNickname())
+                        .category(post.getCategory())
+                        .content(post.getContent())
+                        .image(post.getImage())
+                        .createdAt(post.getCreateAt())
+                        .updatedAt(post.getUpdateAt())
+                        .commentCount(commentCount)
+                        .likeCount(likeCount)
+                        .isLiked(isLiked)
+                        .build();
             }).collect(Collectors.toList());
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), postDtos, "전체 게시글 조회가 완료되었습니다.");
@@ -134,19 +135,19 @@ public class PostService {
             User user = findUser.get();
             Post post = findPost.get();
 
-            GetPostDto getPost = new GetPostDto(
-                    post.getPostId(),
-                    post.getTitle(),
-                    user.getNickname(),
-                    post.getCategory(),
-                    post.getContent(),
-                    post.getImage(),
-                    post.getCreateAt(),
-                    post.getUpdateAt(),
-                    commentCount,
-                    likeCount,
-                    isLiked
-            );
+            GetPostDto getPost = GetPostDto.builder()
+                    .postId(post.getPostId())
+                    .title(post.getTitle())
+                    .nickname(user.getNickname())
+                    .category(post.getCategory())
+                    .content(post.getContent())
+                    .image(post.getImage())
+                    .createdAt(post.getCreateAt())
+                    .updatedAt(post.getUpdateAt())
+                    .commentCount(commentCount)
+                    .likeCount(likeCount)
+                    .isLiked(isLiked)
+                    .build();
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), getPost, "게시글 조회가 완료되었습니다.");
         } catch (Exception e) {
@@ -236,25 +237,59 @@ public class PostService {
                 Optional<PostLike> postLike = postLikeRepository.findByPost_PostIdAndUser_UserId(post.getPostId(), findUser.get().getUserId());
                 Boolean isLiked = postLike.isPresent();
 
-                return new GetPostDto(
-                        post.getPostId(),
-                        post.getTitle(),
-                        post.getUser().getNickname(),
-                        post.getCategory(),
-                        post.getContent(),
-                        post.getImage(),
-                        post.getCreateAt(),
-                        post.getUpdateAt(),
-                        commentCount,
-                        likeCount,
-                        isLiked
-                );
+                return GetPostDto.builder()
+                        .postId(post.getPostId())
+                        .title(post.getTitle())
+                        .nickname(post.getUser().getNickname())
+                        .category(post.getCategory())
+                        .content(post.getContent())
+                        .image(post.getImage())
+                        .createdAt(post.getCreateAt())
+                        .updatedAt(post.getUpdateAt())
+                        .commentCount(commentCount)
+                        .likeCount(likeCount)
+                        .isLiked(isLiked)
+                        .build();
             }).collect(Collectors.toList());
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), postDtos, "주제별 게시글 조회가 완료되었습니다.");
         } catch (Exception e) {
             return CustomApiResponse.createFailWithout(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생했습니다.");
         }
+    }
+
+    // 관심 게시글 조회 메서드
+    public CustomApiResponse<?> getLikedPosts(String currentUserId) {
+
+        Optional<User> findUser = userRepository.findByLoginId(currentUserId);
+        if(findUser.isEmpty()){
+            CustomApiResponse<?> response = CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다.");
+            return response;
+        }
+
+        // 사용자가 좋아요한 게시글 목록을 가져옴
+        List<PostLike> likedPosts = postLikeRepository.findByUser_UserId(findUser.get().getUserId());
+        // 빈 리스트인지 확인
+        if (likedPosts.isEmpty()) {
+            // 반환되는 목록이 없는 경우에 대한 처리
+            return CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "관심 게시글이 없습니다.");
+        }
+
+        // 게시글 DTO로 변환
+        List<LikedPostDto> likedPostDtos = likedPosts.stream()
+                .map(like -> {
+                    Post post = like.getPost(); // 좋아요한 게시글을 가져옴
+                    return LikedPostDto.builder()
+                            .postId(post.getPostId())
+                            .title(post.getTitle())
+                            .content(post.getContent())
+                            .nickname(post.getUser().getNickname())
+                            .image(post.getImage())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return CustomApiResponse.createSuccess(HttpStatus.OK.value(), likedPostDtos, "관심 게시글 목록이 조회되었습니다.");
     }
 
 }
