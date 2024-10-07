@@ -2,6 +2,7 @@ package com.example.back_end.record.service;
 
 import com.example.back_end.domain.Record;
 import com.example.back_end.domain.RecordComment;
+import com.example.back_end.domain.RecordLike;
 import com.example.back_end.domain.User;
 import com.example.back_end.record.dto.CreateRecordDto;
 import com.example.back_end.record.dto.MyRecordListDto;
@@ -85,7 +86,7 @@ public class RecordService {
         Long likeCount = recordLikeRepository.countByRecord_RecordId(recordId);
 
         //좋아요 여부
-        Optional<RecordComment> recordLike = recordCommentRepository.findByRecord_RecordIdAndUser_UserId(recordId, findUser.get().getUserId());
+        Optional<RecordLike> recordLike = recordLikeRepository.findByRecord_RecordIdAndUser_UserId(recordId, findUser.get().getUserId());
         Boolean isLiked = recordLike.isPresent();
 
         User user = findUser.get();
@@ -103,8 +104,6 @@ public class RecordService {
                 likeCount,
                 commentCount
         );
-
-        log.info("recordList"+recordList);
 
         CustomApiResponse<?> response = CustomApiResponse.createSuccess(HttpStatus.OK.value(),recordList,"기본키가"+recordId+"인 게시물이 조회되었습니다.");
         return response;
