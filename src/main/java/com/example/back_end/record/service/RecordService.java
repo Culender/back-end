@@ -94,7 +94,7 @@ public class RecordService {
         RecordListDto recordList = new RecordListDto(
                 record.getRecordId(),
                 user.getProfileImg(),
-                user.getNickname(),
+                record.getUser().getNickname(),
                 record.getTitle(),
                 record.getDate(),
                 record.getContent(),
@@ -140,7 +140,7 @@ public class RecordService {
             recordResponse.add(RecordListDto.builder()
                             .recordId(record.getRecordId())
                             .profileImg(user.getProfileImg())
-                            .nickname(user.getNickname())
+                            .nickname(record.getUser().getNickname())
                             .date(record.getDate())
                             .title(record.getTitle())
                             .content(record.getContent())
@@ -184,7 +184,7 @@ public class RecordService {
             recordResponse.add(RecordListDto.builder()
                     .recordId(record.getRecordId())
                     .profileImg(user.getProfileImg())
-                    .nickname(user.getNickname())
+                    .nickname(record.getUser().getNickname())
                     .date(record.getDate())
                     .title(record.getTitle())
                     .content(record.getContent())
