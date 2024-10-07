@@ -133,7 +133,7 @@ public class RecordService {
             Long likeCount = recordLikeRepository.countByRecord_RecordId(record.getRecordId());
 
             //좋아요 여부
-            Optional<RecordComment> recordLike = recordCommentRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
+            Optional<RecordLike> recordLike = recordLikeRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
             Boolean isLiked = recordLike.isPresent();
 
             recordResponse.add(RecordListDto.builder()
@@ -177,7 +177,7 @@ public class RecordService {
             Long likeCount = recordLikeRepository.countByRecord_RecordId(record.getRecordId());
 
             //좋아요 여부
-            Optional<RecordComment> recordLike = recordCommentRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
+            Optional<RecordLike> recordLike = recordLikeRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
             Boolean isLiked = recordLike.isPresent();
 
             recordResponse.add(RecordListDto.builder()
