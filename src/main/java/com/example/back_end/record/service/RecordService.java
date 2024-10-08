@@ -89,7 +89,7 @@ public class RecordService {
         Long likeCount = recordLikeRepository.countByRecord_RecordId(recordId);
 
         //좋아요 여부
-        Optional<RecordComment> recordLike = recordCommentRepository.findByRecord_RecordIdAndUser_UserId(recordId, findUser.get().getUserId());
+        Optional<RecordLike> recordLike = recordLikeRepository.findByRecord_RecordIdAndUser_UserId(recordId, findUser.get().getUserId());
         Boolean isLiked = recordLike.isPresent();
 
         User user = findUser.get();
@@ -98,7 +98,7 @@ public class RecordService {
         RecordListDto recordList = new RecordListDto(
                 record.getRecordId(),
                 user.getProfileImg(),
-                user.getNickname(),
+                record.getUser().getNickname(),
                 record.getTitle(),
                 record.getDate(),
                 record.getContent(),
@@ -107,8 +107,6 @@ public class RecordService {
                 likeCount,
                 commentCount
         );
-
-        log.info("recordList"+recordList);
 
         CustomApiResponse<?> response = CustomApiResponse.createSuccess(HttpStatus.OK.value(),recordList,"기본키가"+recordId+"인 게시물이 조회되었습니다.");
         return response;
@@ -138,13 +136,13 @@ public class RecordService {
             Long likeCount = recordLikeRepository.countByRecord_RecordId(record.getRecordId());
 
             //좋아요 여부
-            Optional<RecordComment> recordLike = recordCommentRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
+            Optional<RecordLike> recordLike = recordLikeRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
             Boolean isLiked = recordLike.isPresent();
 
             recordResponse.add(RecordListDto.builder()
                             .recordId(record.getRecordId())
                             .profileImg(user.getProfileImg())
-                            .nickname(user.getNickname())
+                            .nickname(record.getUser().getNickname())
                             .date(record.getDate())
                             .title(record.getTitle())
                             .content(record.getContent())
@@ -182,13 +180,13 @@ public class RecordService {
             Long likeCount = recordLikeRepository.countByRecord_RecordId(record.getRecordId());
 
             //좋아요 여부
-            Optional<RecordComment> recordLike = recordCommentRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
+            Optional<RecordLike> recordLike = recordLikeRepository.findByRecord_RecordIdAndUser_UserId(record.getRecordId(), findUser.get().getUserId());
             Boolean isLiked = recordLike.isPresent();
 
             recordResponse.add(RecordListDto.builder()
                     .recordId(record.getRecordId())
                     .profileImg(user.getProfileImg())
-                    .nickname(user.getNickname())
+                    .nickname(record.getUser().getNickname())
                     .date(record.getDate())
                     .title(record.getTitle())
                     .content(record.getContent())
