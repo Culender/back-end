@@ -9,8 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 public class MyRecordListDto {
     private Long recordId;
-    private Long year;
-    private Long month;
-    private Long day;
+    private String year;
+    private String month;
+    private String day;
     //private Boolean isRecord;
 }
