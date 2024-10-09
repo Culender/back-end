@@ -213,10 +213,14 @@ public class RecordService {
         }
         for(Record record : findRecords){
             //날짜 가공
-            LocalDateTime date = record.getCreateAt();
-            Long year = Long.parseLong(date.format(DateTimeFormatter.ofPattern("yyyy")));
-            Long month = Long.parseLong(date.format(DateTimeFormatter.ofPattern("M")));
-            Long day = Long.parseLong(date.format(DateTimeFormatter.ofPattern("dd")));
+            String Date = record.getDate(); //2024.10.3 이런 형식임
+            // '.'을 기준으로 문자열을 분리
+            String[] dateParts = Date.split("\\.");
+
+            // 각각 년, 월, 일을 변수로 저장
+            String year = dateParts[0];  // 2024
+            String month = dateParts[1]; // 10
+            String day = dateParts[2];   // 3
 
             recordResponse.add(MyRecordListDto.builder()
                             .recordId(record.getRecordId())
