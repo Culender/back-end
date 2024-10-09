@@ -1,6 +1,7 @@
 package com.example.back_end.record.controller;
 
 import com.example.back_end.record.dto.CreateRecordDto;
+import com.example.back_end.record.dto.LikedRecordDto;
 import com.example.back_end.record.service.RecordService;
 import com.example.back_end.util.response.CustomApiResponse;
 import com.example.back_end.util.security.jwt.util.AuthenticationUserUtils;
@@ -8,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/record")
@@ -51,6 +54,14 @@ public class RecordController {
     public ResponseEntity<?> getMyRecord(){
         String currentUserId =userUtils.getCurrentUserId();
         CustomApiResponse<?> result = recordService.getMyRecord(currentUserId);
+        return ResponseEntity.ok(result);
+    }
+
+    // 사용자가 좋아요한 관람기록 조회
+    @GetMapping("/getLikedRecords")
+    public ResponseEntity<?> getUserLikedRecords() {
+        String currentUserId = userUtils.getCurrentUserId();
+        CustomApiResponse<?> result = recordService.getUserLikedRecords(currentUserId);
         return ResponseEntity.ok(result);
     }
 }
