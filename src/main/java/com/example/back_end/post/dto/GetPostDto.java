@@ -2,7 +2,6 @@ package com.example.back_end.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPostDto {
-
     private Long postId;
     private String category; //주제
     private String title; //제목

@@ -30,14 +30,14 @@ public class PostController {
         return ResponseEntity.ok(result);
     }
 
-    // 게시글 전체 조회
+    // 게시글 전체(목록) 조회
     @GetMapping("/getAllPosts")
     public ResponseEntity<?> getAllPosts() {
         String currentUserId = userUtils.getCurrentUserId();
         return ResponseEntity.ok(postService.getAllPosts(currentUserId));
     }
 
-    // 게시글 조회
+    // 게시글 상세조회
     @GetMapping("/getPost")
     public ResponseEntity<?> getPost(@RequestParam Long postId){
         String currentUserId = userUtils.getCurrentUserId();
@@ -69,6 +69,7 @@ public class PostController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    //관심등록 게시글 조회
     @GetMapping("/getLikedPosts")
     public ResponseEntity<?> getLikedPosts() {
         String currentUserId = userUtils.getCurrentUserId();

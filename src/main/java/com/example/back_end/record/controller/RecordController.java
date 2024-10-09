@@ -57,7 +57,7 @@ public class RecordController {
         return ResponseEntity.ok(result);
     }
 
-    // 사용자가 좋아요한 기록을 불러오는 API
+    // 사용자가 좋아요한 관람기록 조회
     @GetMapping("/getLikedRecords")
     public ResponseEntity<?> getUserLikedRecords() {
         String currentUserId = userUtils.getCurrentUserId();
