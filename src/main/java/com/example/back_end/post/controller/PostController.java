@@ -1,7 +1,6 @@
 package com.example.back_end.post.controller;
 
 import com.example.back_end.post.dto.CreatePostDto;
-import com.example.back_end.post.dto.LikedPostDto;
 import com.example.back_end.post.dto.UpdatePostDto;
 import com.example.back_end.post.service.PostService;
 import com.example.back_end.util.response.CustomApiResponse;
@@ -11,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/post")

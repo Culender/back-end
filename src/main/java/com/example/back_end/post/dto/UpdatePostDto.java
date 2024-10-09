@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class UpdatePostDto {
 
-    private Long postId;
+    private String category;
     private String title;
     private String content;
     private MultipartFile image;

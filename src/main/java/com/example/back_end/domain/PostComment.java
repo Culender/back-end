@@ -1,5 +1,6 @@
 package com.example.back_end.domain;
 
+import com.example.back_end.post.dto.CreateCommentDto;
 import com.example.back_end.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,9 +35,9 @@ public class PostComment extends BaseEntity {
     }
 
 
-    public static PostComment toEntity(String content, User user, Post post) {
+    public static PostComment toEntity(CreateCommentDto createCommentDto, User user, Post post) {
         return PostComment.builder()
-                .content(content)
+                .content(createCommentDto.getContent())
                 .user(user)
                 .post(post)
                 .build();

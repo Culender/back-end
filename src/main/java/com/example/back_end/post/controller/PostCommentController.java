@@ -19,8 +19,8 @@ public class PostCommentController {
     private final AuthenticationUserUtils userUtils;
 
     // 댓글 작성
-    @PostMapping(value="/createComment", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> createPost(@Valid @ModelAttribute CreateCommentDto createCommentDto) {
+    @PostMapping(value="/createComment")
+    public ResponseEntity<?> createPost(@RequestBody @Valid CreateCommentDto createCommentDto) {
         String currentUserId = userUtils.getCurrentUserId();
         CustomApiResponse<?> result = postCommentService.createComment(createCommentDto, currentUserId);
         return ResponseEntity.ok(result);
@@ -28,25 +28,25 @@ public class PostCommentController {
 
     // 댓글 조회
     @GetMapping("/getCommentsByPost")
-    public ResponseEntity<?> getPost(@RequestParam Long postId){
+    public ResponseEntity<?> getCommentsByPost(@RequestParam Long postId){
         String currentUserId = userUtils.getCurrentUserId();
         CustomApiResponse<?> result = postCommentService.getCommentsByPost(postId, currentUserId);
         return ResponseEntity.ok(result);
     }
 
     // 댓글 수정
-    @PatchMapping(value = "/updateComment", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> updatePost(@RequestParam Long postId, @Valid @ModelAttribute UpdateCommentDto updateCommentDto) {
+    @PatchMapping(value = "/updateComment")
+    public ResponseEntity<?> updateComment(@RequestParam Long commentId, @RequestBody @Valid UpdateCommentDto updateCommentDto) {
         String currentUserId = userUtils.getCurrentUserId();
-        CustomApiResponse<?> result = postCommentService.updateComment(postId, updateCommentDto, currentUserId);
+        CustomApiResponse<?> result = postCommentService.updateComment(commentId, updateCommentDto, currentUserId);
         return ResponseEntity.ok(result);
     }
 
     // 댓글 삭제
     @DeleteMapping("/deleteComment")
-    public ResponseEntity<?> deletePost(@RequestParam Long postId) {
+    public ResponseEntity<?> deleteComment(@RequestParam Long commentId) {
         String currentUserId = userUtils.getCurrentUserId();
-        CustomApiResponse<?> result = postCommentService.deleteComment(postId, currentUserId);
+        CustomApiResponse<?> result = postCommentService.deleteComment(commentId, currentUserId);
         return ResponseEntity.ok(result);
     }
 }

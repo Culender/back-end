@@ -11,6 +11,8 @@ import com.example.back_end.post.repository.PostRepository;
 import com.example.back_end.user.repository.UserRepository;
 import com.example.back_end.util.response.CustomApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,10 +30,8 @@ public class PostCommentService {
     private final UserRepository userRepository;
     private final PostCommentRepository postCommentRepository;
     private final PostRepository postRepository;
-
     // 댓글 작성
     public CustomApiResponse<?> createComment(CreateCommentDto createCommentDto, String currentUserId) {
-        try{
         Optional<Post> post = postRepository.findById(createCommentDto.getPostId());
         if (post.isEmpty()) {
             return CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "해당 게시글을 찾을 수 없습니다.");
@@ -41,19 +41,13 @@ public class PostCommentService {
         if (user.isEmpty()) {
             return CustomApiResponse.createFailWithout(HttpStatus.NOT_FOUND.value(), "해당 사용자를 찾을 수 없습니다.");
         }
+         // 댓글 엔티티 생성
+            PostComment comment = PostComment.toEntity(createCommentDto, user.get(), post.get());
 
-        // 댓글 엔티티 생성
-        PostComment comment = PostComment.toEntity(createCommentDto.getContent(),user.get(), post.get());
+            postCommentRepository.save(comment); // 댓글 저장
+            System.out.println("댓글 저장 완료, commentId:" + comment.getCommentId());
 
-        postCommentRepository.save(comment); // 댓글 저장
-
-        return CustomApiResponse.createSuccess(HttpStatus.OK.value(), null, "댓글 작성이 완료되었습니다.");
-            }
-        catch(DataAccessException dae) {
-            return CustomApiResponse.createFailWithout(HttpStatus.INTERNAL_SERVER_ERROR.value(), "데이터베이스 오류가 발생했습니다.");
-        } catch (Exception e) {
-            return CustomApiResponse.createFailWithout(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생했습니다.");
-        }
+            return CustomApiResponse.createSuccess(HttpStatus.OK.value(), null, "댓글 작성이 완료되었습니다.");
     }
 
     @Transactional(readOnly = true)

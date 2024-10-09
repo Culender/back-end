@@ -175,7 +175,7 @@ public class PostService {
             }
 
             // 게시글 정보 업데이트
-            post.get().updatePost(updatePostDto.getTitle(), updatePostDto.getContent(), imgPath);
+            post.get().updatePost(updatePostDto.getCategory(), updatePostDto.getTitle(), updatePostDto.getContent(), imgPath);
             postRepository.save(post.get());
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), null, "게시글이 성공적으로 수정되었습니다.");
@@ -273,10 +273,10 @@ public class PostService {
         }
 
         // 게시글 DTO로 변환
-        List<LikedPostDto> likedPostDtos = likedPosts.stream()
+        List<GetLikedPostDto> likedPostDtos = likedPosts.stream()
                 .map(like -> {
                     Post post = like.getPost(); // 좋아요한 게시글을 가져옴
-                    return LikedPostDto.builder()
+                    return GetLikedPostDto.builder()
                             .postId(post.getPostId())
                             .title(post.getTitle())
                             .content(post.getContent())

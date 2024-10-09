@@ -32,7 +32,7 @@ public class Post extends BaseEntity {
     @Column(name="image")
     private String image; //첨부이미지
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user; //작성자
 
@@ -55,7 +55,8 @@ public class Post extends BaseEntity {
     }
 
 
-    public void updatePost(String title, String content, String imgPath) {
+    public void updatePost(String category, String title, String content, String imgPath) {
+        this.category = category;
         this.title = title;
         this.content = content;
         this.image = imgPath;

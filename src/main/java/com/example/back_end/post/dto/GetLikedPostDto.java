@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikedPostDto {
+public class GetLikedPostDto {
     private Long postId;
     private String title;
     private String content;

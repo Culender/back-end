@@ -1,6 +1,7 @@
 package com.example.back_end.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreatePostDto {
 
     @NotBlank(message = "주제는 필수 입력값입니다.")
