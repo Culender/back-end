@@ -77,6 +77,11 @@ public class PostCommentService {
                             .build())
                     .collect(Collectors.toList()); // 리스트로 수집
 
+            //댓글 리스트가 비어 있는 경우
+            if (commentDtos.isEmpty()) {
+                return CustomApiResponse.createSuccess(HttpStatus.OK.value(), null, "댓글이 없습니다.");
+            }
+
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), commentDtos, "댓글 목록을 불러왔습니다.");
     }
         catch (Exception e) {
