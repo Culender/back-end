@@ -48,4 +48,14 @@ public class User extends BaseEntity {
                 .build();
         return user;
     }
+
+    // 닉네임과 프로필 이미지를 업데이트하는 메서드
+    public void updateProfile(String newNickname, String newProfileImg) {
+        if (newNickname != null && !newNickname.isEmpty()) {
+            this.nickname = newNickname;
+        }
+        if (newProfileImg != null && !newProfileImg.isEmpty()) {
+            this.profileImg = newProfileImg;
+        }
+    }
 }
