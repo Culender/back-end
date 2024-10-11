@@ -29,36 +29,36 @@ public class Post extends BaseEntity {
     @Column(name="content")
     private String content; //내용
 
-    @Column(name="image")
-    private String image; //첨부이미지
+//    @Column(name="image")
+//    private String image; //첨부이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user; //작성자
 
     // 댓글 기능 (1:N 관계)
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComment> comments;
 
     // 좋아요 기능  (1:N 관계)
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostLike> likes;
 
-    public static Post toEntity(CreatePostDto createPostDto, User user, String imgPath) {
+    public static Post toEntity(CreatePostDto createPostDto, User user) {
         return Post.builder()
                 .user(user)
                 .category(createPostDto.getCategory())
                 .title(createPostDto.getTitle())
                 .content(createPostDto.getContent())
-                .image(imgPath)
+//                .image(imgPath)
                 .build();
     }
 
 
-    public void updatePost(String category, String title, String content, String imgPath) {
+    public void updatePost(String category, String title, String content) {
         this.category = category;
         this.title = title;
         this.content = content;
-        this.image = imgPath;
+//        this.image = imgPath;
     }
 }

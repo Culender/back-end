@@ -14,5 +14,5 @@ public class GetLikedPostDto {
     private String title;
     private String content;
     private String nickname;
-    private String image;
+//    private String image;
 }

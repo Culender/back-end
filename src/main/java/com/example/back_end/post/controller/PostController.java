@@ -20,8 +20,8 @@ public class PostController {
     private final AuthenticationUserUtils userUtils;
 
     // 게시글 작성
-    @PostMapping(value="/createPost", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> createPost(@Valid @ModelAttribute CreatePostDto createPostDto) {
+    @PostMapping(value="/createPost")
+    public ResponseEntity<?> createPost(@Valid @RequestBody CreatePostDto createPostDto) {
         String currentUserId = userUtils.getCurrentUserId();
         CustomApiResponse<?> result = postService.createPost(createPostDto, currentUserId);
         return ResponseEntity.ok(result);
@@ -43,8 +43,8 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PatchMapping(value = "/updatePost", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> updatePost(@RequestParam Long postId, @Valid @ModelAttribute UpdatePostDto updatePostDto) {
+    @PatchMapping(value = "/updatePost")
+    public ResponseEntity<?> updatePost(@RequestParam Long postId, @Valid @RequestBody UpdatePostDto updatePostDto) {
         String currentUserId = userUtils.getCurrentUserId();
         CustomApiResponse<?> result = postService.updatePost(postId, updatePostDto, currentUserId);
         return ResponseEntity.ok(result);

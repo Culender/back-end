@@ -15,7 +15,7 @@ public class GetPostDto {
     private String title; //제목
     private String nickname; //작성자
     private String content; //본문 내용
-    private String image; //첨부 이미지
+//    private String image; //첨부 이미지
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt; // 작성일자
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

@@ -18,5 +18,5 @@ public class CreatePostDto {
     private String title;
     @NotBlank(message = "내용은 필수 입력값입니다.")
     private String content;
-    private MultipartFile image;
+//    private MultipartFile image;
 }

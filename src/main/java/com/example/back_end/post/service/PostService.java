@@ -42,11 +42,11 @@ public class PostService {
                 return response;
             }
 
-            MultipartFile imageUrl = createPostDto.getImage();
-            String imgPath = s3UploadService.upload(imageUrl, "postImage");
+//            MultipartFile imageUrl = createPostDto.getImage();
+//            String imgPath = s3UploadService.upload(imageUrl, "postImage");
 
             //게시글 엔티티 생성
-            Post post = Post.toEntity(createPostDto, findUser.get(), imgPath);
+            Post post = Post.toEntity(createPostDto, findUser.get());
             postRepository.save(post); // 게시글 엔티티 DB에 저장
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), null,"게시글 작성이 완료되었습니다.");
@@ -87,7 +87,7 @@ public class PostService {
                         .nickname(post.getUser().getNickname())
                         .category(post.getCategory())
                         .content(post.getContent())
-                        .image(post.getImage())
+//                        .image(post.getImage())
                         .createdAt(post.getCreateAt())
                         .updatedAt(post.getUpdateAt())
                         .commentCount(commentCount)
@@ -138,7 +138,7 @@ public class PostService {
                     .nickname(user.getNickname())
                     .category(post.getCategory())
                     .content(post.getContent())
-                    .image(post.getImage())
+//                    .image(post.getImage())
                     .createdAt(post.getCreateAt())
                     .updatedAt(post.getUpdateAt())
                     .commentCount(commentCount)
@@ -166,16 +166,16 @@ public class PostService {
                 return CustomApiResponse.createFailWithout(HttpStatus.FORBIDDEN.value(), "게시글을 수정할 권한이 없습니다.");
             }
 
-            // 이미지가 있으면 업로드
-            MultipartFile newImage = updatePostDto.getImage();
-            String imgPath = post.get().getImage(); // 기존 이미지 경로
-
-            if (newImage != null && !newImage.isEmpty()) {
-                imgPath = s3UploadService.upload(newImage, "postImage");
-            }
+//            // 이미지가 있으면 업로드
+//            MultipartFile newImage = updatePostDto.getImage();
+//            String imgPath = post.get().getImage(); // 기존 이미지 경로
+//
+//            if (newImage != null && !newImage.isEmpty()) {
+//                imgPath = s3UploadService.upload(newImage, "postImage");
+//            }
 
             // 게시글 정보 업데이트
-            post.get().updatePost(updatePostDto.getCategory(), updatePostDto.getTitle(), updatePostDto.getContent(), imgPath);
+            post.get().updatePost(updatePostDto.getCategory(), updatePostDto.getTitle(), updatePostDto.getContent());
             postRepository.save(post.get());
 
             return CustomApiResponse.createSuccess(HttpStatus.OK.value(), null, "게시글이 성공적으로 수정되었습니다.");
@@ -240,7 +240,7 @@ public class PostService {
                         .nickname(post.getUser().getNickname())
                         .category(post.getCategory())
                         .content(post.getContent())
-                        .image(post.getImage())
+//                        .image(post.getImage())
                         .createdAt(post.getCreateAt())
                         .updatedAt(post.getUpdateAt())
                         .commentCount(commentCount)
@@ -281,7 +281,7 @@ public class PostService {
                             .title(post.getTitle())
                             .content(post.getContent())
                             .nickname(post.getUser().getNickname())
-                            .image(post.getImage())
+//                            .image(post.getImage())
                             .build();
                 })
                 .collect(Collectors.toList());
